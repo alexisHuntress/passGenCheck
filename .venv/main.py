@@ -2,10 +2,7 @@ import requests
 import hashlib
 import sys
 import os
-# Use an API to check for password leaks
-#
-# Increase security by reading from a named file
-#
+
 # Add a password generator that then checks for security and stores the password along with a user id
 # encripted in a sepperate .txt file to act as a password vault.
 #
@@ -14,6 +11,14 @@ import os
 
 # Delete task when complete
 
+def file_read(args): # Read data from txt file for security
+    try:
+        with open(f'C:/Users/hunte/Desktop/{args}.txt', mode='r', encoding='utf-8') as f:
+            f = f.readlines()
+    except FileNotFoundError as e:
+        print("File not Found")
+    p = [p.strip() for p in f]
+    return p
 
 def api_data_request(query_char): # API request
     url = 'https://api.pwnedpasswords.com/range/' + query_char
@@ -38,11 +43,12 @@ def pwned_api_check(password): # Hash and encode input
 
 
 def main(args): # Main functionality
-    count = pwned_api_check(password)
-    if count:
-        print(f'{password} was found {count} times. Change immediately')
-    else:
-        print(f'{password} secure')
+    for password in file_read(sys.argv[1]):
+        count = pwned_api_check(password)
+        if count:
+            print(f'{password} was found {count} times. Change immediately')
+        else:
+            print(f'{password} secure')
     return 'Finished'
 
 main(sys.argv[1:])
