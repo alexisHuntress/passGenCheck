@@ -1,5 +1,7 @@
 import requests
 import hashlib
+import secrets
+import string
 import sys
 import os
 
@@ -10,6 +12,16 @@ import os
 #
 
 # Delete task when complete
+def pass_generator(length):
+    alphabet = string.ascii_letters + string.digits
+    while True:
+        password = ''.join(secrets.choice(alphabet) for i in range(int(length)))
+        if (any(c.islower() for c in password)
+            and any(c.isupper() for c in password)
+            and sum(c.isdigit() for c in password) >= 3):
+            break
+    print(password)
+
 
 def file_read(args): # Read data from txt file for security
     try:
@@ -51,7 +63,6 @@ def main(args): # Main functionality
             print(f'{password} secure')
     return 'Finished'
 
-main(sys.argv[1:])
-
-if __name__ ==  '__main__':
-    sys.exit(main(sys.argv[1:]))
+pass_generator(sys.argv[1])
+# if __name__ ==  '__main__':
+#     sys.exit(main(sys.argv[1]))
