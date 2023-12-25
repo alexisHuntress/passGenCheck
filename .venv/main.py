@@ -5,22 +5,46 @@ import string
 import sys
 import os
 
-# Add a password generator that then checks for security and stores the password along with a user id
+# Add a password generator that then checks for security
 # encripted in a sepperate .txt file to act as a password vault.
 #
+# Store the password along with an user id encripted in a sepperate .txt file to act as a password vault.
 # Add a GUI for desktop and mobile.
 #
 
 # Delete task when complete
-def pass_generator(length):
-    alphabet = string.ascii_letters + string.digits
-    while True:
-        password = ''.join(secrets.choice(alphabet) for i in range(int(length)))
-        if (any(c.islower() for c in password)
-            and any(c.isupper() for c in password)
-            and sum(c.isdigit() for c in password) >= 3):
-            break
-    print(password)
+def pass_generator(): # Generates a secure password
+    try:
+        or_length = sys.argv[1]
+        if  len(sys.argv) > 1:
+            alphabet = string.ascii_letters + string.digits
+            while True:
+                password = ''.join(secrets.choice(alphabet) for i in range(int(or_length)))
+                if (any(c.islower() for c in password)
+                        and any(c.isupper() for c in password)
+                        and sum(c.isdigit() for c in password) >= 3):
+                    break
+            return password
+    except:
+        length = int(input('Password Length: '))
+        alphabet = string.ascii_letters + string.digits
+        while True:
+            password = ''.join(secrets.choice(alphabet) for i in range(int(length)))
+            if (any(c.islower() for c in password)
+                    and any(c.isupper() for c in password)
+                    and sum(c.isdigit() for c in password) >= 3):
+                break
+        return password
+
+
+
+def security_check():
+    password = pass_generator()
+    count = pwned_api_check(password)
+    if count:
+        print(f'{password} was found {count} times. Change immediately')
+    else:
+        print(f'{password} secure')
 
 
 def file_read(args): # Read data from txt file for security
@@ -63,6 +87,6 @@ def main(args): # Main functionality
             print(f'{password} secure')
     return 'Finished'
 
-pass_generator(sys.argv[1])
+security_check()
 # if __name__ ==  '__main__':
 #     sys.exit(main(sys.argv[1]))
