@@ -5,9 +5,7 @@ import string
 import sys
 import os
 
-# Add a password generator that then checks for security
-# encripted in a sepperate .txt file to act as a password vault.
-#
+
 # Store the password along with an user id encripted in a sepperate .txt file to act as a password vault.
 # Add a GUI for desktop and mobile.
 #
@@ -17,7 +15,8 @@ def pass_generator(): # Generates a secure password
     try:
         or_length = sys.argv[1]
         if  len(sys.argv) > 1:
-            alphabet = string.ascii_letters + string.digits
+            chars = '~`!@#$%^&*_-+=<,>.?'
+            alphabet = string.ascii_letters + string.digits + chars
             while True:
                 password = ''.join(secrets.choice(alphabet) for i in range(int(or_length)))
                 if (any(c.islower() for c in password)
