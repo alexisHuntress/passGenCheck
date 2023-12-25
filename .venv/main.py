@@ -12,23 +12,12 @@ import os
 
 # Delete task when complete
 def pass_generator(): # Generates a secure password
-    try:
-        or_length = sys.argv[1]
-        if  len(sys.argv) > 1:
-            chars = '~`!@#$%^&*_-+=<,>.?'
-            alphabet = string.ascii_letters + string.digits + chars
-            while True:
-                password = ''.join(secrets.choice(alphabet) for i in range(int(or_length)))
-                if (any(c.islower() for c in password)
-                        and any(c.isupper() for c in password)
-                        and sum(c.isdigit() for c in password) >= 3):
-                    break
-            return password
-    except:
-        length = int(input('Password Length: '))
-        alphabet = string.ascii_letters + string.digits
+    or_length = int(sys.argv[1])
+    if  len(sys.argv) > 1:
+        chars = '~`!@#$%^&*_-+=<,>.?'
+        alphabet = string.ascii_letters + string.digits + chars
         while True:
-            password = ''.join(secrets.choice(alphabet) for i in range(int(length)))
+            password = ''.join(secrets.choice(alphabet) for i in range(int(or_length)))
             if (any(c.islower() for c in password)
                     and any(c.isupper() for c in password)
                     and sum(c.isdigit() for c in password) >= 3):
@@ -37,13 +26,17 @@ def pass_generator(): # Generates a secure password
 
 
 
-def security_check():
-    password = pass_generator()
-    count = pwned_api_check(password)
-    if count:
-        print(f'{password} was found {count} times. Change immediately')
-    else:
-        print(f'{password} secure')
+
+def security_check(): # Use the API to check generated password
+    try:
+        password = pass_generator()
+        count = pwned_api_check(password)
+        if count:
+            print(f'{password} was found {count} times. Change immediately')
+        else:
+            print(f'{password} secure')
+    except AttributeError:
+        pass
 
 
 def file_read(args): # Read data from txt file for security
@@ -78,14 +71,18 @@ def pwned_api_check(password): # Hash and encode input
 
 
 def main(args): # Main functionality
-    for password in file_read(sys.argv[1]):
-        count = pwned_api_check(password)
-        if count:
-            print(f'{password} was found {count} times. Change immediately')
-        else:
-            print(f'{password} secure')
-    return 'Finished'
+    try:
+        security_check()
+    except ValueError:
+        for password in file_read(sys.argv[1]):
+            count = pwned_api_check(password)
+            if count:
+                print(f'{password} was found {count} times. Change immediately')
+            else:
+                print(f'{password} secure')
+        return "Finished"
 
-security_check()
-# if __name__ ==  '__main__':
-#     sys.exit(main(sys.argv[1]))
+
+
+if __name__ ==  '__main__':
+    sys.exit(main(sys.argv[1]))
